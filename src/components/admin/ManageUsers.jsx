@@ -83,13 +83,13 @@ const ManageUsers = () => {
 
                 {/* MEMBERSHIP */}
                 <td>
-                  {user.membership ? (
-                    <span className="text-blue-600 font-semibold">
-                      Premium
+                  {user.isMember ? (
+                    <span className="text-yellow-500 font-semibold">
+                      🟡 Gold Member
                     </span>
                   ) : (
                     <span className="text-gray-500">
-                      Free
+                      🥉 Bronze Member
                     </span>
                   )}
                 </td>

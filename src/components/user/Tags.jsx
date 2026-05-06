@@ -28,10 +28,10 @@ const Tags = ({ setSelectedTag }) => {
   }
 
   return (
-    <div className="mb-10">
+    <div className="mb-10 sticky top-20 ">
       {/* Header */}
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-        <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+        <span className="bg-linear-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
           # Tags
         </span>
       </h2>

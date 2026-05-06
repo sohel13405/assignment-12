@@ -10,9 +10,6 @@ import { NavLink, Link} from "react-router-dom";
 import logo from "../../../assets/logo-converso.png";
 import useAuth from "../../../hooks/useAuth";
 import toast from "react-hot-toast";
-import { TbBrandFacebookFilled } from "react-icons/tb";
-import { BsTwitterX } from "react-icons/bs";
-import { GrInstagram } from "react-icons/gr";
 import NotificationBell from "../NotificationBell";
 
 const Navbar = () => {
@@ -68,9 +65,6 @@ const Navbar = () => {
                 Home
               </NavLink>
 
-              <NavLink to="/categories" className={navLink}>
-                Categories
-              </NavLink>
 
               <NavLink to="/membership" className={navLink}>
                 Membership

@@ -10,7 +10,7 @@ const Posts = () => {
   const [page, setPage] = useState(1);
 
   return (
-    <div className="max-w-full mx-auto px-12  py-10">
+    <div className="max-w-full mx-auto px-12  py-10 mt-14">
 
       {/* ✅ GRID LAYOUT */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">

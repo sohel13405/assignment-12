@@ -1,17 +1,22 @@
+import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import Select from "react-select";
+import useAxiosSecure from "../../hooks/UseAxiosSecure";
+
 
 const AddPostForm = ({ handleFormSubmit, isUploading, user }) => {
 
   const [tag, setTag] = useState(null);
 
-  const tagOptions = [
-    { value: "technology", label: "Technology" },
-    { value: "programming", label: "Programming" },
-    { value: "web-development", label: "Web Development" },
-    { value: "javascript", label: "JavaScript" },
-    { value: "react", label: "React" },
-  ];
+  const axiosSecure = useAxiosSecure();
+
+
+  const { data: tags = [] } = useQuery({
+    queryKey: ["tags"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/tags");
+      return res.data;
+    },
+  });
 
   return (
     <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
@@ -88,12 +93,18 @@ const AddPostForm = ({ handleFormSubmit, isUploading, user }) => {
         <div>
           <label className="block mb-1 font-medium">Tag</label>
 
-          <Select
-            options={tagOptions}
-            value={tag}
-            onChange={setTag}
-            placeholder="Select Tag"
-          />
+          <select
+            className="select select-bordered w-full"
+            onChange={(e) => setTag({ value: e.target.value })}
+          >
+            <option value="">Select Tag</option>
+            {tags.map((t) => (
+              <option key={t._id} value={t.name}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+
         </div>
 
         {/* Image */}
@@ -103,7 +114,7 @@ const AddPostForm = ({ handleFormSubmit, isUploading, user }) => {
             type="file"
             name="image"
             className="file-input file-input-bordered w-full"
-            
+
           />
         </div>
 

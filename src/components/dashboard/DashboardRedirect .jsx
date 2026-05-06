@@ -12,11 +12,11 @@ const DashboardRedirect = () => {
   if (isRoleLoading) return <LoadingSpinner />;
 
   if (role === "admin") {
-    return <Navigate to="/dashboard/manage-users" replace />;
+    return <Navigate to="/dashboard/profile" replace />;
   }
 
   if (role === "user") {
-    return <Navigate to="/dashboard/my-post" replace />;
+    return <Navigate to="/dashboard/profile" replace />;
   }
 
  

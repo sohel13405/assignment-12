@@ -16,6 +16,9 @@ import MyPost from "../components/user/MyPost";
 import CommentsPage from "../pages/CommentsPage";
 import AddAnnouncement from "../components/admin/AddAnnouncement";
 import Announcements from "../components/admin/Announcements";
+import Membership from "../pages/Membership";
+import ReportedComments from "../components/admin/Reported Comments/ReportedComments";
+import DashboardProfile from "../components/dashboard/DashboardProfile";
 
 
 
@@ -29,6 +32,12 @@ export const router = createBrowserRouter([
         {
             path: '/',
             element: <Home></Home>
+        },
+        {
+          path: '/membership',
+          element: <PrivateRoutes>
+            <Membership></Membership>
+          </PrivateRoutes>
         },
         {
           path: '/postdetails/:id',
@@ -77,13 +86,19 @@ export const router = createBrowserRouter([
         element: <ManageUsers></ManageUsers>
       },
       {
+        path: 'reported-comments',
+        element: <ReportedComments></ReportedComments>
+      },
+     
+      {
         path: 'add-announcement',
         element: <AddAnnouncement></AddAnnouncement>
       },
       {
         path: 'profile',
-        element: <Profile></Profile>
-      }
+        element: <DashboardProfile></DashboardProfile>
+      },
+      
     ]
   },
  

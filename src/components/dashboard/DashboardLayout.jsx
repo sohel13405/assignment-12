@@ -99,7 +99,7 @@ const DashboardLayout = () => {
                                     text="Add Post"
                                 />
 
-                                 <SidebarLink
+                                <SidebarLink
                                     open={open}
                                     to="/dashboard/my-post"
                                     icon={<FaCartArrowDown />}
@@ -117,11 +117,18 @@ const DashboardLayout = () => {
                                     text="Manage Users"
                                 />
 
-                                 <SidebarLink
+                                <SidebarLink
                                     open={open}
                                     to="/dashboard/add-announcement"
                                     icon={<FaUsers />}
                                     text="Make Announcement"
+                                />
+
+                                <SidebarLink
+                                    open={open}
+                                    to="/dashboard/reported-comments"
+                                    icon={<FaUsers />}
+                                    text="Reported Comments"
                                 />
                             </>
                         )}

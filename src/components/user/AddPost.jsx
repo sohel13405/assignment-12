@@ -14,16 +14,23 @@ const AddPost = () => {
 
   const [isUploading, setIsUploading] = useState(false);
   const [postCount, setPostCount] = useState(0);
+  const [isMember, setIsMember] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // get user post count
+  // 🔥 Fetch user + post count
   useEffect(() => {
-    const getPostCount = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await axiosSecure.get(
+        // 👉 get post count
+        const countRes = await axiosSecure.get(
           `/posts/count?email=${user?.email}`
         );
-        setPostCount(data.count);
+        setPostCount(countRes.data.count);
+
+        // 👉 get user info (IMPORTANT)
+        const userRes = await axiosSecure.get(`/user/${user?.email}`);
+        setIsMember(userRes.data?.isMember || false);
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -32,95 +39,121 @@ const AddPost = () => {
     };
 
     if (user?.email) {
-      getPostCount();
+      fetchData();
     }
   }, [user, axiosSecure]);
 
+  // 🔥 Add post mutation
   const mutation = useMutation({
     mutationFn: async (postData) => {
-      const { data } = await axiosSecure.post(
-        `${import.meta.env.VITE_API_URL}/post`,
-        postData
-      );
+      const { data } = await axiosSecure.post(`/post`, postData);
       return data;
     },
 
     onSuccess: () => {
-      toast.success("Post Added Successfully");
+      toast.success("Post Added Successfully 🚀");
       navigate("/");
     },
 
     onError: (error) => {
       console.log(error);
+      toast.error("Failed to add post");
     },
   });
 
-const handleFormSubmit = async (e, selectedTag) => {
-  e.preventDefault();
+  // 🔥 Submit handler
+  const handleFormSubmit = async (e, selectedTag) => {
+    e.preventDefault();
 
-  setIsUploading(true);
+    setIsUploading(true);
 
-  const form = e.target;
-  const title = form.title.value;
-  const description = form.description.value;
-  const imageFile = form.image.files[0]; // ✅ renamed (clear)
+    const form = e.target;
+    const title = form.title.value;
+    const description = form.description.value;
+    const imageFile = form.image.files[0];
 
-  let imageUrl = "";
+    let imageUrl = "";
 
-  try {
-    // ✅ ONLY upload if image exists
-    if (imageFile) {
-      imageUrl = await imageUploadToImgbb(imageFile);
+    try {
+      // upload image (optional)
+      if (imageFile) {
+        imageUrl = await imageUploadToImgbb(imageFile);
+      }
+
+      const postData = {
+        title,
+        description,
+        tag: selectedTag?.value || "",
+        image: imageUrl || null,
+
+        author: {
+          name: user?.displayName,
+          email: user?.email,
+          image: user?.photoURL,
+        },
+
+        upVote: 0,
+        downVote: 0,
+      };
+
+      mutation.mutate(postData);
+
+      form.reset();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUploading(false);
     }
-
-    const postData = {
-      title,
-      description,
-      tag: selectedTag?.value || "",
-      image: imageUrl || null, // ✅ allow empty image
-
-      author: {
-        name: user?.displayName,
-        email: user?.email,
-        image: user?.photoURL,
-      },
-
-      upVote: 0,
-      downVote: 0,
-    };
-
-    mutation.mutate(postData);
-
-    form.reset();
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setIsUploading(false);
-  }
-};
+  };
 
   if (loading) return <p className="text-center">Loading...</p>;
 
-  // if user already has 5 posts
-  if (postCount >= 5) {
+  // 🚫 LIMIT ONLY FOR NON-MEMBERS
+  if (!isMember && postCount >= 5) {
     return (
       <div className="text-center mt-20">
         <h2 className="text-2xl font-semibold mb-4">
-          You already created 5 posts
+          🚫 Post Limit Reached
         </h2>
 
-        <p className="mb-5">Become a member to add unlimited posts</p>
+        <p className="mb-5 text-gray-600">
+          You have reached your limit of 5 posts.
+        </p>
+
+        <p className="mb-6 font-medium text-yellow-600">
+          Upgrade to Gold 🚀 to post unlimited content
+        </p>
 
         <button
           onClick={() => navigate("/membership")}
-          className="btn btn-primary"
+          className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-xl shadow hover:scale-105 transition"
         >
-          Become a Member
+          Upgrade to Gold 🟡
         </button>
       </div>
     );
   }
 
+  // ✅ GOLD USER UI
+  if (isMember) {
+    return (
+      <div>
+        <div className="text-center mb-6">
+          <span className="px-4 py-1 bg-yellow-400 text-black rounded-full text-sm font-semibold">
+            🟡 Gold Member — Unlimited Posts
+          </span>
+        </div>
+
+        <AddPostForm
+          handleFormSubmit={handleFormSubmit}
+          isUploading={isUploading}
+          user={user}
+        />
+      </div>
+    );
+  }
+
+  // ✅ NORMAL USER UI (below 5 posts)
   return (
     <AddPostForm
       handleFormSubmit={handleFormSubmit}
